@@ -36,14 +36,13 @@ def trace_team_glicko(team, home, hscore, ascore, away):
     if not t: return
     print "%s %s - %s %s" % (home, hscore, ascore, away)
 
-def rate_teams_by_glicko(results):
+def rate_teams_by_glicko(results, these_teams_only):
     teams = {}
 
     for home, hscore, ascore, away, date, _ in results:
+        if home not in these_teams_only or away not in these_teams_only: continue
         if home not in teams: teams[home] = Team(home)
         if away not in teams: teams[away] = Team(away)
-
-        if "rsenal" in home: print home, away
 
         home = teams[home]
         away = teams[away]
@@ -116,6 +115,14 @@ def get_results(filename):
 def merge_by_date(*lists):
     return sorted(reduce(operator.add, lists), key=operator.itemgetter(4))
 
+def get_teams(*lists):
+    teams = set()
+    for l in lists:
+        for home, _, _, away, _, _ in l:
+            teams.add(home)
+            teams.add(away)
+    return teams
+
 if __name__=="__main__":
     bpl_results = get_results("data/bpl_13_14.csv")
     cl_results = get_results("data/cl_13_14.csv")
@@ -124,6 +131,10 @@ if __name__=="__main__":
     ligue1_results = get_results("data/ligue1_13_14.csv")
     seriea_results = get_results("data/seriea_13_14.csv")
     laliga_results = get_results("data/laliga_13_14.csv")
+
+    major_teams_set = get_teams(bpl_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
     results = merge_by_date(bpl_results, cl_results, europa_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
-    teams = rate_teams_by_glicko(results)
-    teams_by_glicko = list(sorted((t for _, t in teams.iteritems()), key=lambda x: x.glicko.mu))
+    teams = rate_teams_by_glicko(results, major_teams_set).values()
+
+    teams_by_glicko = list(sorted(teams, key=lambda x: x.glicko.mu))
+    teams_by_95pct = list(sorted(teams, key=lambda x: x.glicko.mu - 3*x.glicko.sigma))
