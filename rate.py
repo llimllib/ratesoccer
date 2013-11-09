@@ -1,6 +1,7 @@
 import requests, cPickle, csv, codecs, time, operator
 from bs4 import BeautifulSoup
 import glicko
+import datetime
 
 # Set the glicko parameters environment
 #TODO: find proper params?
@@ -10,7 +11,7 @@ class Team(object):
     def __init__(self, name):
         self.name = name
         self.glicko = GlickoEnv.create_rating()
-        self.historical = [(self.glicko, None, None)]
+        self.historical = [(self.glicko, None, None, None)]
 
     def update(self, opponent, result, date=None, use_glicko=None):
         # We need to upate against the glicko of our opponent *before* the match,
@@ -20,6 +21,19 @@ class Team(object):
 
         self.glicko = GlickoEnv.rate(self.glicko, [(result, opponent_glicko)])
         self.historical.append((self.glicko, opponent, result, date))
+
+    def ninetyfive(self):
+        #return the score we're 95% certain the teams' rating is higher than
+        return self.glicko.mu - 3*self.glicko.sigma
+
+    def write_history(self, f):
+        f.write(u"mu,sigma,opp,result,date\n")
+        for h in self.historical:
+            mu, sigma = h[0].mu, h[0].sigma
+            opp = h[1].name if h[1] else ""
+            result = h[2] if h[2] is not None else ""
+            date = h[3].isoformat() if h[3] else ""
+            f.write(u'{0},{1},{2},{3},{4}\n'.format(mu, sigma, opp, result, date))
 
     def __unicode__(self):
         return u"%s %.2f %.2f" % (self.name, self.glicko.mu, self.glicko.sigma)
@@ -101,10 +115,10 @@ def get_results(filename):
     results = list(unicode_csv_reader(data))
     for row in results:
         try:
-            row[4] = time.strptime(row[4], "%A %d %B %Y")
+            row[4] = datetime.datetime.strptime(row[4], "%A %d %B %Y")
         except ValueError:
             try:
-                row[4] = time.strptime(row[4], "%A, %B %d, %Y")
+                row[4] = datetime.datetime.strptime(row[4], "%A, %B %d, %Y")
             except ValueError:
                 print row
                 raise
@@ -123,6 +137,16 @@ def get_teams(*lists):
             teams.add(away)
     return teams
 
+def output(teams):
+    for team in teams:
+        team.write_history(open("ratingdata/{0}.csv".format(team.name), 'w'))
+
+    allout = open("ratingdata/allteams.csv", 'w')
+    allout.write("name,mu,sigma\n")
+    for team in teams:
+        allout.write("{0},{1},{2}\n".format(team.name, team.glicko.mu, team.glicko.sigma))
+    allout.close()
+
 if __name__=="__main__":
     bpl_results = get_results("data/bpl_13_14.csv")
     cl_results = get_results("data/cl_13_14.csv")
@@ -137,4 +161,6 @@ if __name__=="__main__":
     teams = rate_teams_by_glicko(results, major_teams_set).values()
 
     teams_by_glicko = list(sorted(teams, key=lambda x: x.glicko.mu))
-    teams_by_95pct = list(sorted(teams, key=lambda x: x.glicko.mu - 3*x.glicko.sigma))
+    teams_by_95pct = list(sorted(teams, key=lambda x: x.ninetyfive()))
+
+    output(teams)
