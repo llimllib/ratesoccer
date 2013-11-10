@@ -103,7 +103,7 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
       .data(teams)
     .enter()
     .append("a")
-      .attr("xlink:href", function(d) { return d.name + ".html"; })
+      .attr("xlink:href", function(d) { return d.sanitizedname + ".html"; })
     .append("g")
       .attr("class", "row")
       .attr("transform", function(d) { return "translate(0," + (10 + yscale(d.name)) + ")"; });

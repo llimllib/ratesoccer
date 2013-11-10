@@ -1,4 +1,4 @@
-import requests, cPickle, csv, codecs, time, operator
+import requests, cPickle, csv, codecs, time, operator, re
 from bs4 import BeautifulSoup
 import glicko
 import datetime
@@ -10,6 +10,7 @@ GlickoEnv = glicko.Glicko2()
 class Team(object):
     def __init__(self, name):
         self.name = name
+        self.sanitizedname = re.sub("\s", "", name.lower().encode("ascii", "ignore"))
         self.glicko = GlickoEnv.create_rating()
         self.historical = [(self.glicko, None, None, None)]
 
@@ -139,12 +140,12 @@ def get_teams(*lists):
 
 def output(teams):
     for team in teams:
-        team.write_history(open("ratingdata/{0}.csv".format(team.name), 'w'))
+        team.write_history(open("ratingdata/{0}.csv".format(team.sanitizedname), 'w'))
 
     allout = open("ratingdata/allteams.csv", 'w')
-    allout.write("name,mu,sigma\n")
+    allout.write("name,mu,sigma,sanitizedname\n")
     for team in teams:
-        allout.write("{0},{1},{2}\n".format(team.name, team.glicko.mu, team.glicko.sigma))
+        allout.write("{0},{1},{2},{3}\n".format(team.name, team.glicko.mu, team.glicko.sigma, team.sanitizedname))
     allout.close()
 
 if __name__=="__main__":
