@@ -10,6 +10,9 @@
 svg {
   font: 12px sans-serif;
 }
+.active {
+  fill: red;
+}
 </style>
 </head>
 <body>
@@ -98,11 +101,23 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
 
   var row = chart.selectAll(".row")
       .data(teams)
-    .enter().append("g")
+    .enter()
+    .append("a")
+      .attr("xlink:href", function(d) { return d.name + ".html"; })
+    .append("g")
       .attr("class", "row")
       .attr("transform", function(d) { return "translate(0," + (10 + yscale(d.name)) + ")"; });
-      //.each(row);
 
+  //the hidden box that captures clicks and handles mouseover
+  row.append("rect")
+      .attr("x", 0)
+      .attr("width", width)
+      .attr("height", yscale.rangeBand())
+      .attr("opacity", 0)
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout);
+
+  // team names
   row.append("text")
       .attr("x", maxTextWidth)
       .attr("y", yscale.rangeBand() / 2)
@@ -113,16 +128,15 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
   // 95% dist bar
   row.append("rect")
       .attr("class", "skillrange")
-      //.attr("transform", "translate(0,5);")//function(d) { return "translate(0," +  + ")"; });
       .attr("x", function(d) { return xscale(d.five); })
       .attr("y", 8)
       .attr("width", function(d) { return xscale(d.ninetyfive) - xscale(d.five); })
       .attr("height", 2)
       .attr("opacity", .3);
 
+  // median line
   row.append("rect")
       .attr("class", "skillrange")
-      //.attr("transform", "translate(0,5);")//function(d) { return "translate(0," +  + ")"; });
       .attr("x", function(d) { return xscale(d.mu) - 1; })
       .attr("y", 1)
       .attr("fill", "#cc0000")
@@ -130,20 +144,14 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
       .attr("height", yscale.rangeBand()-2)
       .attr("opacity", .8);
 
-  // TODO this is copied from bostock right now TODO
-  function row(row) {
-    var cell = d3.select(this).selectAll(".cell")
-        .data(row.filter(function(d) { return d.z; }))
-      .enter().append("rect")
-        .attr("class", "cell")
-        .attr("x", function(d) { return x(d.x); })
-        .attr("width", x.rangeBand())
-        .attr("height", x.rangeBand())
-        .style("fill-opacity", function(d) { return z(d.z); })
-        .style("fill", function(d) { return nodes[d.x].group == nodes[d.y].group ? c(nodes[d.x].group) : null; })
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
+  function mouseover(p) {
+    d3.selectAll(".row text").classed("active", function(d, i) { if (d.name == p.name) console.log(d.name); return d.name == p.name; });
   }
+
+  function mouseout() {
+    d3.selectAll("text").classed("active", false);
+  }
+
 });
 </script>
 </body>
