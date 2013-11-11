@@ -80,7 +80,7 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
     if (teams[i].ninetyfive < min95) { min95 = teams[i].ninetyfive; }
   }
 
-  teamnames = teams.map(function(t) { return t.name });
+  var teamnames = teams.map(function(t) { return t.name });
 
   var xscale = d3.scale.linear()
     .domain([min95, max95])
@@ -103,7 +103,7 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
       .data(teams)
     .enter()
     .append("a")
-      .attr("xlink:href", function(d) { return d.sanitizedname + ".html"; })
+      .attr("xlink:href", function(d) { return "history/" + d.sanitizedname + ".html"; })
     .append("g")
       .attr("class", "row")
       .attr("transform", function(d) { return "translate(0," + (10 + yscale(d.name)) + ")"; });
@@ -126,26 +126,26 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
       .text(function(d, i) { return d.name; });
 
   // 95% dist bar
+  var barheight = 2;
   row.append("rect")
       .attr("class", "skillrange")
       .attr("x", function(d) { return xscale(d.five); })
-      .attr("y", 8)
+      .attr("y", yscale.rangeBand()/2 - barheight/2)
       .attr("width", function(d) { return xscale(d.ninetyfive) - xscale(d.five); })
-      .attr("height", 2)
+      .attr("height", barheight)
       .attr("opacity", .3);
 
-  // median line
-  row.append("rect")
-      .attr("class", "skillrange")
-      .attr("x", function(d) { return xscale(d.mu) - 1; })
-      .attr("y", 1)
-      .attr("fill", "#cc0000")
-      .attr("width", 3)
-      .attr("height", yscale.rangeBand()-2)
-      .attr("opacity", .8);
+  // median circle
+  var radius = 4;
+  row.append("circle")
+      .attr("class", "skillcircle")
+      .attr("cx", function(d) { return xscale(d.mu) - radius/2; })
+      .attr("cy", yscale.rangeBand() / 2)
+      .attr("r", radius)
+      .attr("fill", "#ff0000");
 
   function mouseover(p) {
-    d3.selectAll(".row text").classed("active", function(d, i) { if (d.name == p.name) console.log(d.name); return d.name == p.name; });
+    d3.selectAll(".row text").classed("active", function(d, i) { return d.name == p.name; });
   }
 
   function mouseout() {
