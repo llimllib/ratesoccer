@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+<title>European Team Ratings</title>
+<link rel="stylesheet" href="http://billmill.org/css/960css/reset.css" />
+<link rel="stylesheet" href="http://billmill.org/css/960css/960.css" />
+<link rel="stylesheet" href="http://billmill.org/css/style.css" />
+<style>
+svg {
+  font: 12px sans-serif;
+}
+.active {
+  fill: red;
+}
+th {
+  border-bottom: 2px solid #ddd;
+  padding: 8px;
+  font-weight: bold;
+}
+td {
+  padding: 8px;
+  border-top: 1px solid #ddd;
+}
+#chart {
+  padding: 0px;
+}
+</style>
+</head>
+<body>
+<div class="container_16">
+    <div class="grid_3">
+        <a href="http://billmill.org"><img src="http://billmill.org/images/logo.png" width="136" height="94"></a>
+    </div>
+    <div class="clear"></div>
+
+    <div class="grid_13 prefix_3 content">
+
+<h1>Betis Rating History</h1>
+
+<div id="datatable"></div>
+
+<div id="bottomspace" style="height: 50px">&nbsp;</div>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+function fmt(dt) {
+  if (dt) {
+    return d3.time.format("%b %d %Y")(dt);
+  }
+  return "";
+}
+
+// global var yes I know dude it's for debugging chill out
+rows = []
+
+d3.csv("../ratingdata/realbetis.csv", function(error, csv) {
+  csv.forEach(function(row) {
+    // skip empty rows
+    if (row.result.length) {
+      row.mu = parseFloat(row.mu).toFixed(1);
+      row.sigma = parseFloat(row.sigma).toFixed(1);
+      row.ninetyfive = row.mu - (2 * row.sigma);
+      row.five = row.mu + (2 * row.sigma);
+      if (row.date) {
+        row.dt = fmt(new Date(Date.parse(row.date)));
+      } else {
+        row.dt = undefined;
+      }
+
+      var res = parseFloat(row.result);
+      if (res < .5) {
+        row.result = "loss";
+      } else if (res > .5) {
+        row.result = "win";
+      } else {
+        row.result = "draw";
+      }
+      rows.push(row);
+    }
+  });
+
+  var table = d3.select("#datatable").append("table");
+      thead = table.append("thead");
+      tbody = table.append("tbody");
+
+  thead.append("th").text("Date");
+  thead.append("th").text("Opponent");
+  thead.append("th").text("Result");
+  thead.append("th").text("Rating");
+  thead.append("th").text("");
+
+  var tr = tbody.selectAll("tr")
+      .data(rows)
+      .enter().append("tr");
+
+  var td = tr.selectAll("td")
+        .data(function(d) { return [d.dt, d.opp, d.result, d.mu]; })
+      .enter().append("td")
+        .text(function(d) { return d; });
+
+  var width = 70,
+      height = d3.select("table")[0][0].clientHeight,
+      mx = 10,
+      radius = 2;
+
+  // Now add the chart column
+  d3.select("#datatable tbody tr").append("td")
+    .attr("id", "chart")
+    .attr("width", width + "px")
+    .attr("rowspan", rows.length);
+
+  var chart = d3.select("#chart").append("svg")
+      .attr("class", "chart")
+      .attr("width", width)
+      .attr("height", height);
+
+  var maxMu = 0;
+  var minMu = Number.MAX_VALUE;
+  for (i=0; i < rows.length; i++) {
+    if (rows[i].mu > maxMu) { maxMu = rows[i].mu; }
+    if (rows[i].mu < minMu) { minMu = rows[i].mu; }
+  }
+
+  var dates = rows.map(function(t) { return t.dt; });
+
+  var xscale = d3.scale.linear()
+    .domain([minMu, maxMu])
+    .range([mx, width-mx]);
+
+  var yscale = d3.scale.ordinal()
+    .domain(dates)
+    .rangeBands([0, height]);
+
+  var line = chart.selectAll(".line")
+      .data(rows)
+    .enter().append("line")
+      .attr("x1", function(d) { return xscale(d.mu); })
+      .attr("y1", function(d) { return yscale(d.dt); })
+      .attr("x2", function(d,i) { return xscale(rows[i+1].mu); })
+      .attr("y2", function(d,i) { return yscale(rows[i+1].dt); })
+      .attr("stroke", "black")
+      .attr("stroke-width", 2)
+
+  var pt = chart.selectAll(".pt")
+      .data(rows)
+    .enter().append("g")
+      .attr("class", "pt")
+      .attr("transform", function(d) { return "translate(" + xscale(d.mu) + "," + (yscale(d.dt) + yscale.rangeBand()/2) + ")"; });
+
+  pt.append("circle")
+      .attr("cx", 0)
+      .attr("cy", 0)
+      .attr("r", radius)
+      .attr("fill", "#ff0000");
+
+});
+</script>
+</body>
+</html>
