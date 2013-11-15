@@ -7,12 +7,6 @@
 <link rel="stylesheet" href="http://billmill.org/css/960css/960.css" />
 <link rel="stylesheet" href="http://billmill.org/css/style.css" />
 <style>
-svg {
-  font: 12px sans-serif;
-}
-.active {
-  fill: red;
-}
 th {
   border-bottom: 2px solid #ddd;
   padding: 8px;
@@ -95,10 +89,10 @@ d3.csv("ratingdata/" + team + ".csv", function(error, csv) {
       .data(rows)
       .enter().append("tr");
 
-  var td = tr.selectAll("td")
-        .data(function(d) { return [d.dt, d.opp, d.result, d.mu]; })
-      .enter().append("td")
-        .text(function(d) { return d; });
+  tr.selectAll("td")
+      .data(function(d) { return [d.dt, d.opp, d.result, d.mu]; })
+    .enter().append("td")
+      .text(function(d) { return d; });
 
   var width = 80,
       height = d3.select("table")[0][0].clientHeight,
