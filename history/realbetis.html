@@ -2,7 +2,7 @@
 <html>
 <meta charset="utf-8">
 <head>
-<title>European Team Ratings</title>
+<title>Rating History</title>
 <link rel="stylesheet" href="http://billmill.org/css/960css/reset.css" />
 <link rel="stylesheet" href="http://billmill.org/css/960css/960.css" />
 <link rel="stylesheet" href="http://billmill.org/css/style.css" />
@@ -25,6 +25,9 @@ td {
 #chart {
   padding: 0px;
 }
+.xaxislabel {
+  font-size: 9px;
+}
 </style>
 </head>
 <body>
@@ -36,7 +39,7 @@ td {
 
     <div class="grid_13 prefix_3 content">
 
-<h1>Betis Rating History</h1>
+<h1>Rating History</h1>
 
 <div id="datatable"></div>
 
@@ -55,30 +58,27 @@ function fmt(dt) {
 // global var yes I know dude it's for debugging chill out
 rows = []
 
-d3.csv("../ratingdata/realbetis.csv", function(error, csv) {
+var team = window.location.search.split("=")[1];
+if (!team) team = "realbetis"
+
+d3.csv("../ratingdata/" + team + ".csv", function(error, csv) {
   csv.forEach(function(row) {
     // skip empty rows
-    if (row.result.length) {
-      row.mu = parseFloat(row.mu).toFixed(1);
-      row.sigma = parseFloat(row.sigma).toFixed(1);
-      row.ninetyfive = row.mu - (2 * row.sigma);
-      row.five = row.mu + (2 * row.sigma);
-      if (row.date) {
-        row.dt = fmt(new Date(Date.parse(row.date)));
-      } else {
-        row.dt = undefined;
-      }
+    row.mu = parseFloat(row.mu).toFixed(1);
+    row.sigma = parseFloat(row.sigma).toFixed(1);
+    row.ninetyfive = row.mu - (2 * row.sigma);
+    row.five = row.mu + (2 * row.sigma);
+    row.dt = fmt(new Date(Date.parse(row.date)));
 
-      var res = parseFloat(row.result);
-      if (res < .5) {
-        row.result = "loss";
-      } else if (res > .5) {
-        row.result = "win";
-      } else {
-        row.result = "draw";
-      }
-      rows.push(row);
+    var res = parseFloat(row.result);
+    if (res < .5) {
+      row.result = "loss";
+    } else if (res > .5) {
+      row.result = "win";
+    } else {
+      row.result = "draw";
     }
+    rows.push(row);
   });
 
   var table = d3.select("#datatable").append("table");
@@ -100,7 +100,7 @@ d3.csv("../ratingdata/realbetis.csv", function(error, csv) {
       .enter().append("td")
         .text(function(d) { return d; });
 
-  var width = 70,
+  var width = 80,
       height = d3.select("table")[0][0].clientHeight,
       mx = 10,
       radius = 2;
@@ -127,21 +127,41 @@ d3.csv("../ratingdata/realbetis.csv", function(error, csv) {
 
   var xscale = d3.scale.linear()
     .domain([minMu, maxMu])
-    .range([mx, width-mx]);
+    .range([mx, width-mx])
+    .nice();
 
   var yscale = d3.scale.ordinal()
     .domain(dates)
     .rangeBands([0, height]);
 
-  var line = chart.selectAll(".line")
+  chart.selectAll(".xaxislabel")
+      .data(xscale.ticks(2))
+    .enter().append("text")
+      .attr("class", "xaxislabel")
+      .attr("x", function(d) { return xscale(d); })
+      .attr("y", 10)
+      .attr("text-anchor", "middle")
+      .text(String)
+
+  chart.selectAll(".xaxistick")
+      .data(xscale.ticks(2))
+    .enter().append("line")
+      .attr("x1", function(d) { return xscale(d); })
+      .attr("x2", function(d) { return xscale(d); })
+      .attr("y1", 10)
+      .attr("y2", height)
+      .attr("stroke", "#eee")
+      .attr("stroke-width", 1);
+
+  chart.selectAll(".line")
       .data(rows)
     .enter().append("line")
       .attr("x1", function(d) { return xscale(d.mu); })
-      .attr("y1", function(d) { return yscale(d.dt); })
-      .attr("x2", function(d,i) { return xscale(rows[i+1].mu); })
-      .attr("y2", function(d,i) { return yscale(rows[i+1].dt); })
-      .attr("stroke", "black")
-      .attr("stroke-width", 2)
+      .attr("y1", function(d) { return yscale(d.dt) + yscale.rangeBand()/2; })
+      .attr("x2", function(d,i) { return rows[i+1] ? xscale(rows[i+1].mu) : xscale(d.mu); })
+      .attr("y2", function(d,i) { return rows[i+1] ? yscale(rows[i+1].dt) + yscale.rangeBand()/2 : yscale(d.dt) + yscale.rangeBand()/2; })
+      .attr("stroke", "#777")
+      .attr("stroke-width", 1);
 
   var pt = chart.selectAll(".pt")
       .data(rows)
@@ -153,6 +173,7 @@ d3.csv("../ratingdata/realbetis.csv", function(error, csv) {
       .attr("cx", 0)
       .attr("cy", 0)
       .attr("r", radius)
+      .attr("opacity", .5)
       .attr("fill", "#ff0000");
 
 });
