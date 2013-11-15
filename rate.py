@@ -143,9 +143,13 @@ def output(teams):
         team.write_history(open("ratingdata/{0}.csv".format(team.sanitizedname), 'w'))
 
     allout = open("ratingdata/allteams.csv", 'w')
-    allout.write("name,mu,sigma,sanitizedname\n")
+    allout.write("name,mu,sigma,sanitizedname,change,last5\n")
     for team in teams:
-        allout.write("{0},{1},{2},{3}\n".format(team.name, team.glicko.mu, team.glicko.sigma, team.sanitizedname))
+        if not len(team.historical):    change = "0"
+        elif len(team.historical) == 1: change = "{:}".format(team.historical[0][0].mu-1500)
+        else:                           change = "{:}".format(team.historical[-1][0].mu-team.historical[-2][0].mu)
+        last5 = "|".join([str(h[0].mu) for h in team.historical[-5:]])
+        allout.write("{},{},{},{},{},{}\n".format(team.name, team.glicko.mu, team.glicko.sigma, team.sanitizedname, change, last5))
     allout.close()
 
 if __name__=="__main__":
