@@ -80,7 +80,6 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
   thead.append("th").text("Other");
   thead.append("th").text("Rating");
   thead.append("th").text("Change");
-  thead.append("th").text("Deviation");
   thead.append("th").text("Last 5");
 
   var tr = tbody.selectAll("tr")
@@ -88,7 +87,7 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
       .enter().append("tr");
 
   var td = tr.selectAll("td")
-        .data(function(d) { return [[d.sanitizedname, d.name], "0-0", "0-0", d.mu, d.change, d.sigma]; })
+        .data(function(d) { return [[d.sanitizedname, d.name], d.leaguerecord, d.otherrecord, d.mu, d.change]; })
       .enter().append("td")
         .html(function(d,i) {
             if (i==0) {
