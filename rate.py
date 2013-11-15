@@ -18,16 +18,15 @@ class Team(object):
 
     def update(self, opponent, result, date=None, use_glicko=None):
         # We need to upate against the glicko of our opponent *before* the match,
-        # so this parameter allows us to pass it in.
-        if use_glicko: opponent_glicko = use_glicko
-        else:          opponent_glicko = opponent.glicko
+        # so the use_glicko parameter allows us to pass it in.
+        opponent_glicko = use_glicko if use_glicko else opponent.glicko
 
         self.glicko = GlickoEnv.rate(self.glicko, [(result, opponent_glicko)])
         self.historical.append((self.glicko, opponent, result, date))
 
     def ninetyfive(self):
         #return the score we're 95% certain the teams' rating is higher than
-        return self.glicko.mu - 3*self.glicko.sigma
+        return self.glicko.mu - 2*self.glicko.sigma
 
     def write_history(self, f):
         f.write(u"mu,sigma,opp,result,date\n")
