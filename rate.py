@@ -12,7 +12,7 @@ class Team(object):
         self.name = name
         self.sanitizedname = re.sub("\s", "", name.lower().encode("ascii", "ignore"))
         self.glicko = GlickoEnv.create_rating()
-        self.historical = [(self.glicko, None, None, None)]
+        self.historical = []
 
     def update(self, opponent, result, date=None, use_glicko=None):
         # We need to upate against the glicko of our opponent *before* the match,
