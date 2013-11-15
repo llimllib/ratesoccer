@@ -61,7 +61,7 @@ rows = []
 var team = window.location.search.split("=")[1];
 if (!team) team = "realbetis"
 
-d3.csv("../ratingdata/" + team + ".csv", function(error, csv) {
+d3.csv("ratingdata/" + team + ".csv", function(error, csv) {
   csv.forEach(function(row) {
     // skip empty rows
     row.mu = parseFloat(row.mu).toFixed(1);
