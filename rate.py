@@ -13,6 +13,8 @@ class Team(object):
         self.sanitizedname = re.sub("\s", "", name.lower().encode("ascii", "ignore"))
         self.glicko = GlickoEnv.create_rating()
         self.historical = []
+        # leauge wins, draws, losses, other comp wins, draws, losses
+        self.record = [[0,0,0], [0,0,0]]
 
     def update(self, opponent, result, date=None, use_glicko=None):
         # We need to upate against the glicko of our opponent *before* the match,
@@ -36,6 +38,15 @@ class Team(object):
             date = h[3].isoformat() if h[3] else ""
             f.write(u'{0},{1},{2},{3},{4}\n'.format(mu, sigma, opp, result, date))
 
+    def update_record(self, ourscore, oppscore, league):
+        league = 0 if league else 1
+        if ourscore > oppscore:
+            self.record[league][0] += 1
+        elif ourscore < oppscore:
+            self.record[league][2] += 1
+        else:
+            self.record[league][1] += 1
+
     def __unicode__(self):
         return u"%s %.2f %.2f" % (self.name, self.glicko.mu, self.glicko.sigma)
 
@@ -54,10 +65,17 @@ def trace_team_glicko(team, home, hscore, ascore, away):
 def rate_teams_by_glicko(results, these_teams_only):
     teams = {}
 
-    for home, hscore, ascore, away, date, _ in results:
+    for home, hscore, ascore, away, date, _, league in results:
+        if home not in teams and home in these_teams_only: teams[home] = Team(home)
+        if away not in teams and away in these_teams_only: teams[away] = Team(away)
+
+        # update the team records even for games we're not rating
+        if home in these_teams_only:
+            teams[home].update_record(hscore, ascore, league)
+        if away in these_teams_only:
+            teams[away].update_record(ascore, hscore, league)
+
         if home not in these_teams_only or away not in these_teams_only: continue
-        if home not in teams: teams[home] = Team(home)
-        if away not in teams: teams[away] = Team(away)
 
         home = teams[home]
         away = teams[away]
@@ -99,7 +117,7 @@ def normalize_name(name):
     if name == "Spurs": return "Tottenham Hotspur"
     return name
 
-def get_results(filename):
+def get_results(filename, league=True):
     data = codecs.open(filename, encoding='utf8').readlines()[1:]
 
     # The CSV module doesn't handle quoted entries if there's a space after
@@ -125,6 +143,8 @@ def get_results(filename):
                 raise
         row[0] = normalize_name(row[0])
         row[3] = normalize_name(row[3])
+
+        row.append(league)
     return results
 
 def merge_by_date(*lists):
@@ -133,7 +153,9 @@ def merge_by_date(*lists):
 def get_teams(*lists):
     teams = set()
     for l in lists:
-        for home, _, _, away, _, _ in l:
+        for game in l:
+            home = game[0]
+            away = game[3]
             teams.add(home)
             teams.add(away)
     return teams
@@ -143,23 +165,27 @@ def output(teams):
         team.write_history(open("ratingdata/{0}.csv".format(team.sanitizedname), 'w'))
 
     allout = open("ratingdata/allteams.csv", 'w')
-    allout.write("name,mu,sigma,sanitizedname,change,last5\n")
+    allout.write("name,mu,sigma,sanitizedname,change,last5,leaguerecord,otherrecord\n")
     for team in teams:
         if not len(team.historical):    change = "0"
         elif len(team.historical) == 1: change = "{:}".format(team.historical[0][0].mu-1500)
         else:                           change = "{:}".format(team.historical[-1][0].mu-team.historical[-2][0].mu)
         last5 = "|".join([str(h[0].mu) for h in team.historical[-5:]])
-        allout.write("{},{},{},{},{},{}\n".format(team.name, team.glicko.mu, team.glicko.sigma, team.sanitizedname, change, last5))
+        leaguerecord = "-".join(map(str, team.record[0]))
+        otherrecord = "-".join(map(str, team.record[1]))
+        allout.write("{},{},{},{},{},{},{},{}\n".format(team.name,
+            team.glicko.mu, team.glicko.sigma, team.sanitizedname,
+            change, last5, leaguerecord, otherrecord))
     allout.close()
 
 if __name__=="__main__":
     bpl_results = get_results("data/bpl_13_14.csv")
-    cl_results = get_results("data/cl_13_14.csv")
-    europa_results = get_results("data/europa_13_14.csv")
     bundesliga_results = get_results("data/bundesliga_13_14.csv")
     ligue1_results = get_results("data/ligue1_13_14.csv")
     seriea_results = get_results("data/seriea_13_14.csv")
     laliga_results = get_results("data/laliga_13_14.csv")
+    cl_results = get_results("data/cl_13_14.csv", league=False)
+    europa_results = get_results("data/europa_13_14.csv", league=False)
 
     major_teams_set = get_teams(bpl_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
     results = merge_by_date(bpl_results, cl_results, europa_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
