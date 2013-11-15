@@ -7,6 +7,15 @@
 <link rel="stylesheet" href="http://billmill.org/css/960css/960.css" />
 <link rel="stylesheet" href="http://billmill.org/css/style.css" />
 <style>
+th {
+  border-bottom: 2px solid #ddd;
+  padding: 8px;
+  font-weight: bold;
+}
+td {
+  padding: 8px;
+  border-top: 1px solid #ddd;
+}
 svg {
   font: 12px sans-serif;
 }
@@ -26,42 +35,24 @@ svg {
 
 <h1>European Team Ratings</h1>
 
-<div id="chart"></div>
+<div id="datatable"></div>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
-
-var width = 800,
-    height = 2000,
-    maxTextWidth = 120,
-    mx = 30, //x margin
-    my = 25; //y margin
-
-var chart = d3.select("#chart").append("svg")
-    .attr("class", "chart")
-    .attr("width", width + 2*mx)
-    .attr("height", height + 2*my)
-  .append("g")
-    .attr("transform", "translate(" + mx + "," + my + ")");
 
 // global var yes I know dude it's for debugging chill out
 teams = []
 
 d3.csv("ratingdata/allteams.csv", function(error, csv) {
   csv.forEach(function(row) {
-    row.mu = parseFloat(row.mu);
-    row.sigma = parseFloat(row.sigma);
+    row.mu = parseFloat(row.mu).toFixed(1);
+    row.sigma = parseFloat(row.sigma).toFixed(1);
     row.ninetyfive = row.mu - (2 * row.sigma);
     row.five = row.mu + (2 * row.sigma);
+    row.change = d3.format("+.1f")(row.change)
+    row.last5 = row.last5.split("|").map(Number)
     teams.push(row);
   });
-
-  // sort the data in decreasing order of ninetyfive
-  //teams.sort(function(a,b) {
-  //  if (a.ninetyfive < b.ninetyfive) return 1;
-  //  if (a.ninetyfive > b.ninetyfive) return -1;
-  //  return 0;
-  //});
 
   teams.sort(function(a,b) {
     if (a.mu < b.mu) return 1;
@@ -80,77 +71,46 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
     if (teams[i].ninetyfive < min95) { min95 = teams[i].ninetyfive; }
   }
 
-  var teamnames = teams.map(function(t) { return t.name });
+  var table = d3.select("#datatable").append("table");
+      thead = table.append("thead");
+      tbody = table.append("tbody");
 
-  var xscale = d3.scale.linear()
-    .domain([min95, max95])
-    .range([width, maxTextWidth + 10]);
+  thead.append("th").text("Team");
+  thead.append("th").html("League");
+  thead.append("th").text("Other");
+  thead.append("th").text("Rating");
+  thead.append("th").text("Change");
+  thead.append("th").text("Deviation");
+  thead.append("th").text("Last 5");
 
-  var yscale = d3.scale.ordinal()
-    .domain(teamnames)
-    .rangeBands([0, height]);
-
-  chart.selectAll(".xaxislabel")
-      .data(xscale.ticks(10))
-    .enter().append("text")
-      .attr("class", "xaxislabel")
-      .attr("x", function(d) { return xscale(d); })
-      .attr("y", 0)
-      .attr("text-anchor", "middle")
-      .text(String)
-
-  var row = chart.selectAll(".row")
+  var tr = tbody.selectAll("tr")
       .data(teams)
-    .enter()
-    .append("a")
-      .attr("xlink:href", function(d) { return "history/" + d.sanitizedname + ".html"; })
-    .append("g")
-      .attr("class", "row")
-      .attr("transform", function(d) { return "translate(0," + (10 + yscale(d.name)) + ")"; });
+      .enter().append("tr");
 
-  //the hidden box that captures clicks and handles mouseover
-  row.append("rect")
-      .attr("x", 0)
-      .attr("width", width)
-      .attr("height", yscale.rangeBand())
-      .attr("opacity", 0)
-      .on("mouseover", mouseover)
-      .on("mouseout", mouseout);
+  var td = tr.selectAll("td")
+        .data(function(d) { return [[d.sanitizedname, d.name], "0-0", "0-0", d.mu, d.change, d.sigma]; })
+      .enter().append("td")
+        .html(function(d,i) {
+            if (i==0) {
+              return '<a href="history.html?t='+d[0]+'">'+d[1]+'</a>';
+            } else {
+              return d;
+            }
+        });
 
-  // team names
-  row.append("text")
-      .attr("x", maxTextWidth)
-      .attr("y", yscale.rangeBand() / 2)
-      .attr("dy", ".32em")
-      .attr("text-anchor", "end")
-      .text(function(d, i) { return d.name; });
+  var x = d3.scale.linear().domain([0, 10]).range([0, 50]);
+  var y = d3.scale.linear().domain([0, 10]).range([0, 30]);
 
-  // 95% dist bar
-  var barheight = 2;
-  row.append("rect")
-      .attr("class", "skillrange")
-      .attr("x", function(d) { return xscale(d.five); })
-      .attr("y", yscale.rangeBand()/2 - barheight/2)
-      .attr("width", function(d) { return xscale(d.ninetyfive) - xscale(d.five); })
-      .attr("height", barheight)
-      .attr("opacity", .3);
+  var line = d3.svg.line()
+    .x(x)
+    .y(y);
 
-  // median circle
-  var radius = 4;
-  row.append("circle")
-      .attr("class", "skillcircle")
-      .attr("cx", function(d) { return xscale(d.mu) - radius/2; })
-      .attr("cy", yscale.rangeBand() / 2)
-      .attr("r", radius)
-      .attr("fill", "#ff0000");
+  // display the line by appending an svg:path element with the data line we created above
+  //graph.append("svg:path").attr("d", line(data));
 
-  function mouseover(p) {
-    d3.selectAll(".row text").classed("active", function(d, i) { return d.name == p.name; });
-  }
+  //tr.data(teams)
+  //  .append("svg").append("svg:path").attr("d", line(data))
 
-  function mouseout() {
-    d3.selectAll("text").classed("active", false);
-  }
 
 });
 </script>
