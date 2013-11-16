@@ -3,15 +3,12 @@ from bs4 import BeautifulSoup
 import glicko
 import datetime
 
-# Set the glicko parameters environment
-#TODO: find proper params?
-GlickoEnv = glicko.Glicko2()
-
 class Team(object):
-    def __init__(self, name):
+    def __init__(self, name, glicko_env):
         self.name = name
         self.sanitizedname = re.sub("\s", "", name.lower().encode("ascii", "ignore"))
-        self.glicko = GlickoEnv.create_rating()
+        self.glicko = glicko_env.create_rating()
+        self.glicko_env = glicko_env
         self.historical = []
         # leauge wins, draws, losses, other comp wins, draws, losses
         self.record = [[0,0,0], [0,0,0]]
@@ -21,7 +18,7 @@ class Team(object):
         # so the use_glicko parameter allows us to pass it in.
         opponent_glicko = use_glicko if use_glicko else opponent.glicko
 
-        self.glicko = GlickoEnv.rate(self.glicko, [(result, opponent_glicko)])
+        self.glicko = self.glicko_env.rate(self.glicko, [(result, opponent_glicko)])
         self.historical.append((self.glicko, opponent, result, date))
 
     def ninetyfive(self):
@@ -61,14 +58,14 @@ def trace_team_glicko(team, home, hscore, ascore, away):
     if not t: return
     print "%s %s - %s %s" % (home, hscore, ascore, away)
 
-def rate_teams_by_glicko(results, these_teams_only):
+def rate_teams_by_glicko(results, glicko_env, score_match, these_teams_only):
     teams = {}
 
     for home, hscore, ascore, away, date, _, league in results:
-        if home not in teams and home in these_teams_only: teams[home] = Team(home)
-        if away not in teams and away in these_teams_only: teams[away] = Team(away)
+        if home not in teams and home in these_teams_only: teams[home] = Team(home, glicko_env)
+        if away not in teams and away in these_teams_only: teams[away] = Team(away, glicko_env)
 
-        # update the team records even for games we're not rating
+        # update team records even for games we're not rating
         if home in these_teams_only:
             teams[home].update_record(hscore, ascore, league)
         if away in these_teams_only:
@@ -79,21 +76,25 @@ def rate_teams_by_glicko(results, these_teams_only):
         home = teams[home]
         away = teams[away]
 
-        if hscore > ascore:
-            home_value = 1
-            away_value = 0
-        elif hscore < ascore:
-            home_value = 0
-            away_value = 1
-        else:
-            home_value = away_value = .5
+        home_value, away_value = score_match(hscore, ascore)
 
-        #TODO parse the dates
         old_home_glicko = home.glicko
         home.update(away, home_value, date)
         away.update(home, away_value, date, use_glicko=old_home_glicko)
 
     return teams
+
+def winner_takes_all(hscore, ascore):
+    if hscore > ascore:
+        home_value = 1
+        away_value = 0
+    elif hscore < ascore:
+        home_value = 0
+        away_value = 1
+    else:
+        home_value = away_value = .5
+
+    return home_value, away_value
 
 # ripped from the python docs: http://docs.python.org/2/library/csv.html#csv-examples
 # plus an additional strip()
@@ -143,6 +144,10 @@ def get_results(filename, league=True):
         row[0] = normalize_name(row[0])
         row[3] = normalize_name(row[3])
 
+        # home and away scores
+        row[1] = int(row[1])
+        row[2] = int(row[2])
+
         row.append(league)
     return results
 
@@ -188,7 +193,10 @@ if __name__=="__main__":
 
     major_teams_set = get_teams(bpl_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
     results = merge_by_date(bpl_results, cl_results, europa_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
-    teams = rate_teams_by_glicko(results, major_teams_set).values()
+
+    glicko_env = glicko.Glicko2()
+
+    teams = rate_teams_by_glicko(results, glicko_env, winner_takes_all, major_teams_set).values()
 
     teams_by_glicko = list(sorted(teams, key=lambda x: x.glicko.mu))
     teams_by_95pct = list(sorted(teams, key=lambda x: x.ninetyfive()))
