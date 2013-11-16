@@ -16,8 +16,11 @@ td {
   padding: 8px;
   border-top: 1px solid #ddd;
 }
-.spark, .sparktd {
-  padding: 2px;
+.spark {
+  padding: 0;
+}
+.sparktd {
+  padding: 6px 0px 0px 0px;
 }
 path {
     stroke: steelblue;
@@ -99,7 +102,7 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
         });
 
   var width = 49,
-      height = 17;
+      height = 22;
   var x = d3.scale.linear().domain([0, 4]).range([0, width]);
   var y = d3.scale.linear().domain([minMu, maxMu]).range([height, 0]);
 
