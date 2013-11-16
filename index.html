@@ -16,11 +16,13 @@ td {
   padding: 8px;
   border-top: 1px solid #ddd;
 }
-svg {
-  font: 12px sans-serif;
+.spark, .sparktd {
+  padding: 2px;
 }
-.active {
-  fill: red;
+path {
+    stroke: steelblue;
+    stroke-width: 1;
+    fill: none;
 }
 </style>
 </head>
@@ -97,19 +99,34 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
             }
         });
 
-  var x = d3.scale.linear().domain([0, 10]).range([0, 50]);
-  var y = d3.scale.linear().domain([0, 10]).range([0, 30]);
+  var width = 49,
+      height = 17;
+  var x = d3.scale.linear().domain([0, 4]).range([0, width]);
+  var y = d3.scale.linear().domain([minMu, maxMu]).range([height, 0]);
+
+  function sety(last5) {
+    var max = 0;
+    var min = Number.MAX_VALUE;
+    for (i=0; i < last5.length; i++) {
+      if (last5[i] > max) max = last5[i];
+      if (last5[i] < min) min = last5[i];
+    }
+    y = d3.scale.linear().domain([min, max]).range([height,0]);
+    return last5;
+  }
 
   var line = d3.svg.line()
-    .x(x)
-    .y(y);
+    .x(function(d,i) { return x(i); })
+    .y(function(d)   { return y(d); });
 
-  // display the line by appending an svg:path element with the data line we created above
-  //graph.append("svg:path").attr("d", line(data));
-
-  //tr.data(teams)
-  //  .append("svg").append("svg:path").attr("d", line(data))
-
+  tr.append("td")
+      .attr("class", "sparktd")
+    .append("svg")
+      .attr("class", "spark")
+      .attr("height", height)
+      .attr("width", width)
+    .append("svg:path")
+      .attr("d", function(d) { return line(sety(d.last5)); });
 
 });
 </script>
