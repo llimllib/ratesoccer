@@ -19,7 +19,7 @@ class Team(object):
         opponent_glicko = use_glicko if use_glicko else opponent.glicko
 
         self.glicko = self.glicko_env.rate(self.glicko, [(result, opponent_glicko)])
-        self.historical.append((self.glicko, opponent, result, date))
+        self.historical.append((self.glicko, opponent, opponent_glicko, result, date))
 
     def ninetyfive(self):
         #return the score we're 95% certain the teams' rating is higher than
@@ -30,9 +30,10 @@ class Team(object):
         for h in self.historical:
             mu, sigma = h[0].mu, h[0].sigma
             opp = h[1].name if h[1] else ""
-            result = h[2] if h[2] is not None else ""
-            date = h[3].isoformat() if h[3] else ""
-            f.write(u'{0},{1},{2},{3},{4}\n'.format(mu, sigma, opp, result, date))
+            opp_rating = h[2]
+            result = h[3] if h[3] is not None else ""
+            date = h[4].isoformat() if h[4] else ""
+            f.write(u'{},{},{},{},{},{}\n'.format(mu, sigma, opp, opp_rating, result, date))
 
     def update_record(self, ourscore, oppscore, league):
         league = 0 if league else 1
@@ -71,7 +72,8 @@ def rate_teams_by_glicko(results, glicko_env, score_match, these_teams_only):
         if away in these_teams_only:
             teams[away].update_record(ascore, hscore, league)
 
-        if home not in these_teams_only or away not in these_teams_only: continue
+        if home not in these_teams_only or away not in these_teams_only:
+            continue
 
         home = teams[home]
         away = teams[away]
