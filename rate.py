@@ -1,5 +1,4 @@
-import requests, cPickle, csv, codecs, time, operator, re
-from bs4 import BeautifulSoup
+import csv, codecs, time, operator, re
 import glicko
 import datetime
 
@@ -10,7 +9,7 @@ class Team(object):
         self.glicko = glicko_env.create_rating()
         self.glicko_env = glicko_env
         self.historical = []
-        # leauge wins, draws, losses, other comp wins, draws, losses
+        # league wins, draws, losses, other comp wins, draws, losses
         self.record = [[0,0,0], [0,0,0]]
 
     def update(self, opponent, result, date=None, use_glicko=None):
@@ -62,7 +61,12 @@ def trace_team_glicko(team, home, hscore, ascore, away):
 def rate_teams_by_glicko(results, glicko_env, score_match, these_teams_only):
     teams = {}
 
-    for home, hscore, ascore, away, date, _, league in results:
+    for result in results:
+        try:
+            home, hscore, ascore, away, date, _, league = result
+        except ValueError:
+            print "failed to parse result {}".format(result)
+            raise
         if home not in teams and home in these_teams_only: teams[home] = Team(home, glicko_env)
         if away not in teams and away in these_teams_only: teams[away] = Team(away, glicko_env)
 
@@ -134,6 +138,7 @@ def get_results(filename, league=True):
     data = map(lambda line: line.replace(', "', ',"'), data)
 
     results = list(unicode_csv_reader(data))
+    valid_results = []
     for row in results:
         try:
             row[4] = datetime.datetime.strptime(row[4], "%A %d %B %Y")
@@ -147,11 +152,15 @@ def get_results(filename, league=True):
         row[3] = normalize_name(row[3])
 
         # home and away scores
-        row[1] = int(row[1])
-        row[2] = int(row[2])
+        try:
+            row[1] = int(row[1])
+            row[2] = int(row[2])
+        except ValueError:
+            continue
 
         row.append(league)
-    return results
+        valid_results.append(row)
+    return valid_results
 
 def merge_by_date(*lists):
     return sorted(reduce(operator.add, lists), key=operator.itemgetter(4))
