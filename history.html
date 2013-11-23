@@ -63,14 +63,13 @@ d3.csv("ratingdata/" + team + ".csv", function(error, csv) {
     row.five = row.mu + (2 * row.sigma);
     row.dt = fmt(new Date(Date.parse(row.date)));
 
-
     var res = parseFloat(row.result);
     if (res < .5) {
-      row.result = "loss";
+      row.result = row.score + " L";
     } else if (res > .5) {
-      row.result = "win";
+      row.result = row.score + " W";
     } else {
-      row.result = "draw";
+      row.result = row.score + " D";
     }
     rows.push(row);
   });
