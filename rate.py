@@ -1,6 +1,55 @@
 import csv, codecs, time, operator, re
 import glicko
 import datetime
+import copy
+
+class Game(object):
+    def __init__(self, hometeam, homescore, awayscore, awayteam, date, league, glicko_env):
+        self.hometeam = hometeam
+        self.homescore = homescore
+        self.awayteam = awayteam
+        self.awayscore = awayscore
+        self.date = date
+        self.league = league
+        self.glicko_env = glicko_env
+        self.rated = True
+        self.score = "{}-{}".format(homescore, awayscore)
+
+    def score_match(self, score_function):
+        self.home_value, self.away_value = score_function(self.homescore, self.awayscore)
+
+    def update(self, ranked_teams):
+        if self.hometeam.name in ranked_teams and self.awayteam.name in ranked_teams:
+            new_hometeam_glicko = self.glicko_env.rate(self.hometeam.glicko, [(self.home_value, self.awayteam.glicko)])
+            self.awayteam.glicko = self.glicko_env.rate(self.awayteam.glicko, [(self.away_value, self.hometeam.glicko)])
+            self.hometeam.glicko = new_hometeam_glicko
+        else:
+            self.rated = False
+
+        # save the ratings after the game
+        self.hometeam_rating = copy.copy(self.hometeam.glicko)
+        self.awayteam_rating = copy.copy(self.awayteam.glicko)
+
+        self.hometeam.historical.append(self)
+        self.awayteam.historical.append(self)
+
+        #update each team's record
+        league = 0 if self.league else 1
+        if self.homescore > self.awayscore:
+            self.hometeam.record[league][0] += 1
+            self.awayteam.record[league][2] += 1
+        elif self.homescore < self.awayscore:
+            self.hometeam.record[league][2] += 1
+            self.awayteam.record[league][0] += 1
+        else:
+            self.hometeam.record[league][1] += 1
+            self.awayteam.record[league][1] += 1
+
+    def me(self, team):
+        if team.name == self.hometeam.name:
+            return (self.hometeam_rating, self.awayteam, self.awayteam_rating, self.home_value, self.date, self.score)
+        else:
+            return (self.awayteam_rating, self.hometeam, self.hometeam_rating, self.away_value, self.date, self.score)
 
 class Team(object):
     def __init__(self, name, glicko_env):
@@ -12,37 +61,26 @@ class Team(object):
         # league wins, draws, losses, other comp wins, draws, losses
         self.record = [[0,0,0], [0,0,0]]
 
-    def update(self, opponent, result, date=None, use_glicko=None):
-        # We need to upate against the glicko of our opponent *before* the match,
-        # so the use_glicko parameter allows us to pass it in.
-        opponent_glicko = use_glicko if use_glicko else opponent.glicko
-
-        self.glicko = self.glicko_env.rate(self.glicko, [(result, opponent_glicko)])
-        self.historical.append((self.glicko, opponent, opponent_glicko, result, date))
-
     def ninetyfive(self):
         #return the score we're 95% certain the teams' rating is higher than
         return self.glicko.mu - 2*self.glicko.sigma
 
     def write_history(self, f):
-        f.write(u"fullname,mu,sigma,opp,opp_rating,result,date\n")
-        for h in self.historical:
-            mu, sigma = h[0].mu, h[0].sigma
-            opp = h[1].name if h[1] else ""
-            opp_rating = h[2].mu
-            result = h[3] if h[3] is not None else ""
-            date = h[4].isoformat() if h[4] else ""
-            f.write(u'{},{},{},{},{},{},{}\n'.format(
-                self.name, mu, sigma, opp, opp_rating, result, date))
+        f.write(u"fullname,mu,sigma,opp,opp_rating,result,date,score\n")
+        for game in self.historical:
+            rating, opp, opp_rating, result, date, score = game.me(self)
+            mu, sigma = rating.mu, rating.sigma
+            opp = opp.name
+            opp_rating = opp_rating.mu if game.rated else -1
+            date = date.isoformat()
+            f.write(u'{},{},{},{},{},{},{},{}\n'.format(
+                self.name, mu, sigma, opp, opp_rating, result, date, score))
 
-    def update_record(self, ourscore, oppscore, league):
-        league = 0 if league else 1
-        if ourscore > oppscore:
-            self.record[league][0] += 1
-        elif ourscore < oppscore:
-            self.record[league][2] += 1
-        else:
-            self.record[league][1] += 1
+    def last5(self):
+        """return the last 5 ratings the team has held, separated by |"""
+        def rating(game):
+            return "{:.2f}".format(game.me(self)[0].mu)
+        return "|".join(rating(g) for g in self.historical[-5:])
 
     def __unicode__(self):
         return u"%s %.2f %.2f" % (self.name, self.glicko.mu, self.glicko.sigma)
@@ -59,7 +97,7 @@ def trace_team_glicko(team, home, hscore, ascore, away):
     if not t: return
     print "%s %s - %s %s" % (home, hscore, ascore, away)
 
-def rate_teams_by_glicko(results, glicko_env, score_match, these_teams_only):
+def rate_teams_by_glicko(results, glicko_env, score_fn, ranked_teams):
     teams = {}
 
     for result in results:
@@ -68,26 +106,15 @@ def rate_teams_by_glicko(results, glicko_env, score_match, these_teams_only):
         except ValueError:
             print "failed to parse result {}".format(result)
             raise
-        if home not in teams and home in these_teams_only: teams[home] = Team(home, glicko_env)
-        if away not in teams and away in these_teams_only: teams[away] = Team(away, glicko_env)
 
-        # update team records even for games we're not rating
-        if home in these_teams_only:
-            teams[home].update_record(hscore, ascore, league)
-        if away in these_teams_only:
-            teams[away].update_record(ascore, hscore, league)
+        if home not in teams: teams[home] = Team(home, glicko_env)
+        if away not in teams: teams[away] = Team(away, glicko_env)
 
-        if home not in these_teams_only or away not in these_teams_only:
-            continue
+        home, away = teams[home], teams[away]
 
-        home = teams[home]
-        away = teams[away]
-
-        home_value, away_value = score_match(hscore, ascore)
-
-        old_home_glicko = home.glicko
-        home.update(away, home_value, date)
-        away.update(home, away_value, date, use_glicko=old_home_glicko)
+        game = Game(home, hscore, ascore, away, date, league, glicko_env)
+        game.score_match(score_fn)
+        game.update(ranked_teams)
 
     return teams
 
@@ -176,22 +203,24 @@ def get_teams(*lists):
             teams.add(away)
     return teams
 
-def output(teams):
+def output(teams, rated_teams):
     for team in teams:
-        team.write_history(open("ratingdata/{0}.csv".format(team.sanitizedname), 'w'))
+        if team.name in rated_teams:
+            f = codecs.open("ratingdata/{0}.csv".format(team.sanitizedname), 'w', 'utf8')
+            team.write_history(f)
 
-    allout = open("ratingdata/allteams.csv", 'w')
-    allout.write("name,mu,sigma,sanitizedname,change,last5,leaguerecord,otherrecord\n")
+    allout = codecs.open("ratingdata/allteams.csv", 'w', 'utf8')
+    allout.write("name,mu,sigma,sanitizedname,last5,leaguerecord,otherrecord\n")
     for team in teams:
-        if not len(team.historical):    change = "0"
-        elif len(team.historical) == 1: change = "{:}".format(team.historical[0][0].mu-1500)
-        else:                           change = "{:}".format(team.historical[-1][0].mu-team.historical[-2][0].mu)
-        last5 = "|".join([str(h[0].mu) for h in team.historical[-5:]])
+        if team.name not in rated_teams: continue
+
+        ## XXX TODO get last 5 results for a team
+        last5 = team.last5()
         leaguerecord = "-".join(map(str, team.record[0]))
         otherrecord = "-".join(map(str, team.record[1]))
-        allout.write("{},{},{},{},{},{},{},{}\n".format(team.name,
+        allout.write(u"{},{},{},{},{},{},{}\n".format(team.name,
             team.glicko.mu, team.glicko.sigma, team.sanitizedname,
-            change, last5, leaguerecord, otherrecord))
+            last5, leaguerecord, otherrecord))
     allout.close()
 
 if __name__=="__main__":
@@ -203,14 +232,14 @@ if __name__=="__main__":
     cl_results = get_results("data/cl_13_14.csv", league=False)
     europa_results = get_results("data/europa_13_14.csv", league=False)
 
-    major_teams_set = get_teams(bpl_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
+    rated_teams = get_teams(bpl_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
     results = merge_by_date(bpl_results, cl_results, europa_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
 
     glicko_env = glicko.Glicko2(volatility=0.25)
 
-    teams = rate_teams_by_glicko(results, glicko_env, winner_takes_all, major_teams_set).values()
+    teams = rate_teams_by_glicko(results, glicko_env, winner_takes_all, rated_teams).values()
 
     teams_by_glicko = list(sorted(teams, key=lambda x: x.glicko.mu))
     teams_by_95pct = list(sorted(teams, key=lambda x: x.ninetyfive()))
 
-    output(teams)
+    output(teams, rated_teams)
