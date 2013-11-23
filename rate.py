@@ -25,11 +25,11 @@ class Team(object):
         return self.glicko.mu - 2*self.glicko.sigma
 
     def write_history(self, f):
-        f.write(u"mu,sigma,opp,result,date\n")
+        f.write(u"mu,sigma,opp,opp_rating,result,date\n")
         for h in self.historical:
             mu, sigma = h[0].mu, h[0].sigma
             opp = h[1].name if h[1] else ""
-            opp_rating = h[2]
+            opp_rating = h[2].mu
             result = h[3] if h[3] is not None else ""
             date = h[4].isoformat() if h[4] else ""
             f.write(u'{},{},{},{},{},{}\n'.format(mu, sigma, opp, opp_rating, result, date))
@@ -205,7 +205,7 @@ if __name__=="__main__":
     major_teams_set = get_teams(bpl_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
     results = merge_by_date(bpl_results, cl_results, europa_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
 
-    glicko_env = glicko.Glicko2()
+    glicko_env = glicko.Glicko2(volatility=0.25)
 
     teams = rate_teams_by_glicko(results, glicko_env, winner_takes_all, major_teams_set).values()
 
