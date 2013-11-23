@@ -1,0 +1,19 @@
+mu,sigma,opp,result,date
+1662.30921683,290.317463857,Getafe,glicko.glicko2.Rating(mu=1500.000, sigma=350.000, volatility=0.060),1,2013-08-17T00:00:00
+1823.68974084,244.603150366,Lyon,glicko.glicko2.Rating(mu=1751.754, sigma=251.258, volatility=0.060),1,2013-08-20T00:00:00
+1735.1237371,232.595117519,Elche,glicko.glicko2.Rating(mu=1337.691, sigma=290.317, volatility=0.060),0.5,2013-08-24T00:00:00
+1791.17514298,208.264648782,Lyon,glicko.glicko2.Rating(mu=1526.197, sigma=200.290, volatility=0.060),1,2013-08-28T00:00:00
+1710.81997532,188.573272542,Atletico Madrid,glicko.glicko2.Rating(mu=1791.931, sigma=247.461, volatility=0.060),0,2013-09-01T00:00:00
+1676.45466747,175.795236506,Levante,glicko.glicko2.Rating(mu=1493.581, sigma=220.629, volatility=0.060),0.5,2013-09-14T00:00:00
+1637.80423675,166.211977995,Malaga,glicko.glicko2.Rating(mu=1406.709, sigma=199.744, volatility=0.060),0.5,2013-09-21T00:00:00
+1603.37223628,156.591292669,Barcelona,glicko.glicko2.Rating(mu=1821.071, sigma=212.888, volatility=0.060),0,2013-09-24T00:00:00
+1565.28736215,150.407454523,Sevilla FC,glicko.glicko2.Rating(mu=1288.350, sigma=168.840, volatility=0.060),0.5,2013-09-28T00:00:00
+1531.75234371,141.590823263,Bayer Leverkusen,glicko.glicko2.Rating(mu=1708.553, sigma=150.816, volatility=0.060),0,2013-10-02T00:00:00
+1445.93360087,138.164923906,Rayo Vallecano,glicko.glicko2.Rating(mu=1143.244, sigma=163.060, volatility=0.060),0,2013-10-05T00:00:00
+1492.37783619,130.205321512,Valencia,glicko.glicko2.Rating(mu=1462.012, sigma=140.574, volatility=0.060),1,2013-10-19T00:00:00
+1460.06970739,123.845239405,Manchester United,glicko.glicko2.Rating(mu=1567.920, sigma=144.160, volatility=0.060),0,2013-10-23T00:00:00
+1476.1810137,120.100575912,Almeria,glicko.glicko2.Rating(mu=1210.820, sigma=145.834, volatility=0.060),1,2013-10-27T00:00:00
+1474.75204601,114.887361208,Real Valladolid,glicko.glicko2.Rating(mu=1460.626, sigma=137.189, volatility=0.060),0.5,2013-10-30T00:00:00
+1500.27366297,110.594974502,Osasuna,glicko.glicko2.Rating(mu=1395.227, sigma=140.755, volatility=0.060),1,2013-11-02T00:00:00
+1511.4103489,107.065741882,Manchester United,glicko.glicko2.Rating(mu=1642.828, sigma=126.028, volatility=0.060),0.5,2013-11-05T00:00:00
+1502.8043339,105.437243076,Real Madrid,glicko.glicko2.Rating(mu=1843.762, sigma=127.047, volatility=0.060),0,2013-11-09T00:00:00

@@ -1,0 +1,13 @@
+mu,sigma,opp,result,date
+1337.69078317,290.317463857,Manchester United,glicko.glicko2.Rating(mu=1500.000, sigma=350.000, volatility=0.060),0,2013-08-17T00:00:00
+1279.68482356,260.486542031,Tottenham Hotspur,glicko.glicko2.Rating(mu=1662.309, sigma=290.317, volatility=0.060),0,2013-08-25T00:00:00
+1421.02505759,226.340975609,West Bromwich Albion,glicko.glicko2.Rating(mu=1381.876, sigma=251.258, volatility=0.060),1,2013-09-01T00:00:00
+1505.18075575,214.321642655,Liverpool,glicko.glicko2.Rating(mu=1851.233, sigma=215.230, volatility=0.060),0.5,2013-09-16T00:00:00
+1557.11767373,194.250518143,Valencia,glicko.glicko2.Rating(mu=1314.295, sigma=201.294, volatility=0.060),1,2013-09-19T00:00:00
+1595.03389269,180.46307886,Crystal Palace,glicko.glicko2.Rating(mu=1319.578, sigma=202.800, volatility=0.060),1,2013-09-22T00:00:00
+1563.44831729,169.274152315,Arsenal,glicko.glicko2.Rating(mu=1847.626, sigma=179.909, volatility=0.060),0,2013-09-28T00:00:00
+1506.55068028,156.241534963,Southampton,glicko.glicko2.Rating(mu=1589.821, sigma=181.318, volatility=0.060),0,2013-10-06T00:00:00
+1520.46607694,151.726524188,Sunderland,glicko.glicko2.Rating(mu=1109.675, sigma=180.091, volatility=0.060),1,2013-10-19T00:00:00
+1506.84854747,142.154054123,West Ham United,glicko.glicko2.Rating(mu=1417.596, sigma=152.920, volatility=0.060),0.5,2013-10-27T00:00:00
+1446.57880971,134.078998863,Cardiff City,glicko.glicko2.Rating(mu=1399.974, sigma=139.628, volatility=0.060),0,2013-11-03T00:00:00
+1439.39744189,126.93297216,Stoke City,glicko.glicko2.Rating(mu=1382.030, sigma=136.710, volatility=0.060),0.5,2013-11-10T00:00:00

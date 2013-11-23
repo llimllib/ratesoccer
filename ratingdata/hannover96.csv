@@ -1,0 +1,13 @@
+mu,sigma,opp,result,date
+1662.30921683,290.317463857,VfL Wolfsburg,glicko.glicko2.Rating(mu=1500.000, sigma=350.000, volatility=0.060),1,2013-08-10T00:00:00
+1433.06223648,260.48659262,Borussia Monchengladbach,glicko.glicko2.Rating(mu=1337.691, sigma=290.317, volatility=0.060),0,2013-08-17T00:00:00
+1520.3619274,226.596544783,Schalke 04,glicko.glicko2.Rating(mu=1322.184, sigma=251.258, volatility=0.060),1,2013-08-24T00:00:00
+1675.99315712,207.691538962,Mainz,glicko.glicko2.Rating(mu=1788.308, sigma=230.397, volatility=0.060),1,2013-08-31T00:00:00
+1600.49953372,186.644615538,Bayern Munich,glicko.glicko2.Rating(mu=1712.393, sigma=216.770, volatility=0.060),0,2013-09-14T00:00:00
+1667.2502957,169.508297056,FC Augsburg,glicko.glicko2.Rating(mu=1573.119, sigma=181.791, volatility=0.060),1,2013-09-21T00:00:00
+1602.14416341,155.804825262,Bayer Leverkusen,glicko.glicko2.Rating(mu=1648.103, sigma=162.847, volatility=0.060),0,2013-09-28T00:00:00
+1584.49250419,145.933014653,Hertha Berlin,glicko.glicko2.Rating(mu=1472.564, sigma=157.259, volatility=0.060),0.5,2013-10-04T00:00:00
+1548.94273144,137.422670293,Borussia Dortmund,glicko.glicko2.Rating(mu=1693.249, sigma=150.534, volatility=0.060),0,2013-10-19T00:00:00
+1490.12910264,130.439485262,TSG Hoffenheim,glicko.glicko2.Rating(mu=1421.108, sigma=145.148, volatility=0.060),0,2013-10-26T00:00:00
+1439.22772756,123.96683369,Werder Bremen,glicko.glicko2.Rating(mu=1396.716, sigma=129.194, volatility=0.060),0,2013-11-03T00:00:00
+1425.50752749,119.112173472,TSV Eintracht Braunschweig,glicko.glicko2.Rating(mu=1289.995, sigma=146.954, volatility=0.060),0.5,2013-11-08T00:00:00

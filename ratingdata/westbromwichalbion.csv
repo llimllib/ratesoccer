@@ -1,0 +1,12 @@
+mu,sigma,opp,result,date
+1337.69078317,290.317463857,Southampton,glicko.glicko2.Rating(mu=1500.000, sigma=350.000, volatility=0.060),0,2013-08-17T00:00:00
+1381.87634172,251.258493845,Everton,glicko.glicko2.Rating(mu=1500.000, sigma=290.317, volatility=0.060),0.5,2013-08-24T00:00:00
+1249.47867831,220.919189148,Swansea City,glicko.glicko2.Rating(mu=1279.685, sigma=260.487, volatility=0.060),0,2013-09-01T00:00:00
+1263.82963616,196.941256665,Fulham,glicko.glicko2.Rating(mu=1317.628, sigma=225.687, volatility=0.060),0.5,2013-09-14T00:00:00
+1332.66401936,178.916715946,Sunderland,glicko.glicko2.Rating(mu=1225.991, sigma=219.800, volatility=0.060),1,2013-09-21T00:00:00
+1454.3905792,169.560255885,Manchester United,glicko.glicko2.Rating(mu=1645.088, sigma=165.602, volatility=0.060),1,2013-09-28T00:00:00
+1514.38024592,165.500150027,Arsenal,glicko.glicko2.Rating(mu=1939.887, sigma=155.883, volatility=0.060),0.5,2013-10-06T00:00:00
+1489.99193147,154.415227094,Stoke City,glicko.glicko2.Rating(mu=1350.868, sigma=157.974, volatility=0.060),0.5,2013-10-19T00:00:00
+1454.97559602,145.145644346,Liverpool,glicko.glicko2.Rating(mu=1632.559, sigma=164.598, volatility=0.060),0,2013-10-26T00:00:00
+1474.42910556,139.495940692,Crystal Palace,glicko.glicko2.Rating(mu=1178.693, sigma=154.734, volatility=0.060),1,2013-11-02T00:00:00
+1503.47332109,134.054927466,Chelsea,glicko.glicko2.Rating(mu=1736.097, sigma=125.274, volatility=0.060),0.5,2013-11-09T00:00:00

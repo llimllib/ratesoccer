@@ -1,0 +1,14 @@
+mu,sigma,opp,result,date
+1337.69078317,290.317463857,St Etienne,glicko.glicko2.Rating(mu=1500.000, sigma=350.000, volatility=0.060),0,2013-08-11T00:00:00
+1381.87634172,251.258493845,Paris Saint-Germain,glicko.glicko2.Rating(mu=1500.000, sigma=290.317, volatility=0.060),0.5,2013-08-18T00:00:00
+1425.03625939,223.664397665,Nice,glicko.glicko2.Rating(mu=1566.938, sigma=260.487, volatility=0.060),0.5,2013-08-25T00:00:00
+1398.54020882,199.630254977,Sochaux,glicko.glicko2.Rating(mu=1302.765, sigma=218.859, volatility=0.060),0.5,2013-08-31T00:00:00
+1328.28751177,179.862785333,Evian Thonon Gaillard,glicko.glicko2.Rating(mu=1443.959, sigma=196.809, volatility=0.060),0,2013-09-14T00:00:00
+1290.14559247,167.267274897,Stade Rennes,glicko.glicko2.Rating(mu=1524.248, sigma=182.330, volatility=0.060),0,2013-09-21T00:00:00
+1382.49549347,155.938395615,Lyon,glicko.glicko2.Rating(mu=1473.048, sigma=141.500, volatility=0.060),1,2013-09-25T00:00:00
+1403.81821503,146.349581527,Montpellier,glicko.glicko2.Rating(mu=1538.178, sigma=150.872, volatility=0.060),0.5,2013-09-29T00:00:00
+1374.44962999,138.579337634,Lille,glicko.glicko2.Rating(mu=1572.258, sigma=149.177, volatility=0.060),0,2013-10-05T00:00:00
+1352.06072965,132.616304345,Nantes,glicko.glicko2.Rating(mu=1591.515, sigma=139.456, volatility=0.060),0,2013-10-19T00:00:00
+1327.77057165,126.739619044,Guingamp,glicko.glicko2.Rating(mu=1525.491, sigma=131.816, volatility=0.060),0,2013-10-26T00:00:00
+1276.33940574,121.282901863,Valenciennes,glicko.glicko2.Rating(mu=1196.872, sigma=141.038, volatility=0.060),0,2013-11-02T00:00:00
+1296.1838704,117.368515251,Toulouse,glicko.glicko2.Rating(mu=1500.440, sigma=123.354, volatility=0.060),0.5,2013-11-09T00:00:00

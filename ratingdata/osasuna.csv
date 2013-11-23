@@ -1,0 +1,14 @@
+mu,sigma,opp,result,date
+1337.69078317,290.317463857,Granada,glicko.glicko2.Rating(mu=1500.000, sigma=350.000, volatility=0.060),0,2013-08-18T00:00:00
+1279.68482356,260.486542031,Athletic Bilbao,glicko.glicko2.Rating(mu=1662.309, sigma=290.317, volatility=0.060),0,2013-08-23T00:00:00
+1247.03577146,243.593923828,Villarreal,glicko.glicko2.Rating(mu=1720.315, sigma=260.487, volatility=0.060),0,2013-08-31T00:00:00
+1134.40402153,211.246565142,Getafe,glicko.glicko2.Rating(mu=1219.336, sigma=217.486, volatility=0.060),0,2013-09-15T00:00:00
+1283.87147837,196.109526441,Elche,glicko.glicko2.Rating(mu=1428.926, sigma=205.039, volatility=0.060),1,2013-09-20T00:00:00
+1276.42435132,192.943462085,Atletico Madrid,glicko.glicko2.Rating(mu=1931.040, sigma=199.024, volatility=0.060),0,2013-09-24T00:00:00
+1235.85184726,177.738285511,Levante,glicko.glicko2.Rating(mu=1489.708, sigma=168.425, volatility=0.060),0,2013-09-29T00:00:00
+1350.56826513,167.049361918,Malaga,glicko.glicko2.Rating(mu=1501.893, sigma=156.706, volatility=0.060),1,2013-10-04T00:00:00
+1409.7180698,164.144766029,Barcelona,glicko.glicko2.Rating(mu=1899.600, sigma=180.465, volatility=0.060),0.5,2013-10-19T00:00:00
+1353.00237207,150.784300622,Sevilla FC,glicko.glicko2.Rating(mu=1432.365, sigma=132.280, volatility=0.060),0,2013-10-27T00:00:00
+1395.22663643,140.755203493,Rayo Vallecano,glicko.glicko2.Rating(mu=1279.311, sigma=137.654, volatility=0.060),1,2013-10-30T00:00:00
+1357.95365755,132.24076978,Real Sociedad,glicko.glicko2.Rating(mu=1474.752, sigma=114.887, volatility=0.060),0,2013-11-02T00:00:00
+1312.45122409,125.104167407,Almeria,glicko.glicko2.Rating(mu=1324.308, sigma=127.394, volatility=0.060),0,2013-11-08T00:00:00

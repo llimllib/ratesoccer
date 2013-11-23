@@ -1,0 +1,13 @@
+mu,sigma,opp,result,date
+1337.69078317,290.317463857,Juventus,glicko.glicko2.Rating(mu=1500.000, sigma=350.000, volatility=0.060),0,2013-08-24T00:00:00
+1337.69078317,247.461052174,Bologna,glicko.glicko2.Rating(mu=1337.691, sigma=290.317, volatility=0.060),0.5,2013-09-01T00:00:00
+1219.33615674,217.485624859,Genoa,glicko.glicko2.Rating(mu=1279.685, sigma=260.487, volatility=0.060),0,2013-09-15T00:00:00
+1272.93965369,201.353282046,Cagliari,glicko.glicko2.Rating(mu=1502.158, sigma=235.210, volatility=0.060),0.5,2013-09-21T00:00:00
+1263.10555379,197.074291538,AS Roma,glicko.glicko2.Rating(mu=1875.449, sigma=210.105, volatility=0.060),0,2013-09-25T00:00:00
+1219.26063678,181.261186469,AC Milan,glicko.glicko2.Rating(mu=1463.696, sigma=194.057, volatility=0.060),0,2013-09-28T00:00:00
+1265.82463105,171.043204515,Torino,glicko.glicko2.Rating(mu=1512.958, sigma=172.229, volatility=0.060),0.5,2013-10-06T00:00:00
+1354.26301771,158.577695568,Livorno,glicko.glicko2.Rating(mu=1416.129, sigma=158.749, volatility=0.060),1,2013-10-20T00:00:00
+1436.53733032,148.802244049,Atalanta,glicko.glicko2.Rating(mu=1528.452, sigma=147.411, volatility=0.060),1,2013-10-26T00:00:00
+1406.63378668,140.545123271,Hellas Verona,glicko.glicko2.Rating(mu=1608.928, sigma=138.838, volatility=0.060),0,2013-10-30T00:00:00
+1346.23831561,132.920380008,Sassuolo,glicko.glicko2.Rating(mu=1287.421, sigma=142.157, volatility=0.060),0,2013-11-03T00:00:00
+1333.99396208,129.547207238,Fiorentina,glicko.glicko2.Rating(mu=1692.533, sigma=134.192, volatility=0.060),0,2013-11-10T00:00:00

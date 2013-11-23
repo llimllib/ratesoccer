@@ -1,0 +1,17 @@
+mu,sigma,opp,result,date
+1662.30921683,290.317463857,Bologna,glicko.glicko2.Rating(mu=1500.000, sigma=350.000, volatility=0.060),1,2013-08-25T00:00:00
+1751.75406692,251.258499425,Chievo Verona,glicko.glicko2.Rating(mu=1500.000, sigma=290.317, volatility=0.060),1,2013-08-31T00:00:00
+1819.61305496,223.654535523,Atalanta,glicko.glicko2.Rating(mu=1566.938, sigma=260.487, volatility=0.060),1,2013-09-14T00:00:00
+1926.20105175,197.44036227,Borussia Dortmund,glicko.glicko2.Rating(mu=1875.734, sigma=205.674, volatility=0.060),1,2013-09-18T00:00:00
+1949.07315665,188.409064814,AC Milan,glicko.glicko2.Rating(mu=1533.644, sigma=228.066, volatility=0.060),1,2013-09-22T00:00:00
+1870.18743979,187.072303724,Sassuolo,glicko.glicko2.Rating(mu=1150.068, sigma=219.887, volatility=0.060),0.5,2013-09-25T00:00:00
+1881.17122913,182.505105142,Genoa,glicko.glicko2.Rating(mu=1339.371, sigma=181.374, volatility=0.060),1,2013-09-28T00:00:00
+1811.0235392,165.836151899,Arsenal,glicko.glicko2.Rating(mu=1879.046, sigma=168.830, volatility=0.060),0,2013-10-01T00:00:00
+1827.5386754,159.930490177,Livorno,glicko.glicko2.Rating(mu=1432.420, sigma=164.503, volatility=0.060),1,2013-10-06T00:00:00
+1788.75889309,149.777114371,AS Roma,glicko.glicko2.Rating(mu=1954.908, sigma=180.572, volatility=0.060),0,2013-10-18T00:00:00
+1809.63282713,143.174973414,Marseille,glicko.glicko2.Rating(mu=1518.204, sigma=123.522, volatility=0.060),1,2013-10-22T00:00:00
+1826.63291166,138.238091944,Torino,glicko.glicko2.Rating(mu=1505.692, sigma=155.042, volatility=0.060),1,2013-10-27T00:00:00
+1857.01992351,131.216393354,Fiorentina,glicko.glicko2.Rating(mu=1698.860, sigma=151.104, volatility=0.060),1,2013-10-30T00:00:00
+1861.00539822,130.30311954,Catania,glicko.glicko2.Rating(mu=1274.934, sigma=139.238, volatility=0.060),1,2013-11-02T00:00:00
+1870.35912605,127.713189815,Marseille,glicko.glicko2.Rating(mu=1467.682, sigma=110.276, volatility=0.060),1,2013-11-06T00:00:00
+1822.36601761,121.592966672,Juventus,glicko.glicko2.Rating(mu=1786.152, sigma=130.214, volatility=0.060),0,2013-11-10T00:00:00

@@ -1,0 +1,18 @@
+mu,sigma,opp,result,date
+1662.30921683,290.317463857,Guingamp,glicko.glicko2.Rating(mu=1500.000, sigma=350.000, volatility=0.060),1,2013-08-11T00:00:00
+1751.75406692,251.258499425,Evian Thonon Gaillard,glicko.glicko2.Rating(mu=1500.000, sigma=290.317, volatility=0.060),1,2013-08-17T00:00:00
+1797.64860267,229.959283298,Valenciennes,glicko.glicko2.Rating(mu=1433.062, sigma=260.487, volatility=0.060),1,2013-08-24T00:00:00
+1670.34898602,205.410170254,AS Monaco,glicko.glicko2.Rating(mu=1660.351, sigma=234.555, volatility=0.060),0,2013-09-01T00:00:00
+1608.11391697,193.49597834,Toulouse,glicko.glicko2.Rating(mu=1320.576, sigma=204.302, volatility=0.060),0.5,2013-09-14T00:00:00
+1556.54400454,177.622257289,Arsenal,glicko.glicko2.Rating(mu=1743.225, sigma=218.158, volatility=0.060),0,2013-09-18T00:00:00
+1543.0545652,163.299289945,Bastia,glicko.glicko2.Rating(mu=1473.373, sigma=184.540, volatility=0.060),0.5,2013-09-21T00:00:00
+1597.67690116,151.504610717,St Etienne,glicko.glicko2.Rating(mu=1524.326, sigma=180.841, volatility=0.060),1,2013-09-24T00:00:00
+1622.85675624,144.19055156,Lorient,glicko.glicko2.Rating(mu=1368.812, sigma=161.575, volatility=0.060),1,2013-09-28T00:00:00
+1589.43208644,136.45632794,Borussia Dortmund,glicko.glicko2.Rating(mu=1740.988, sigma=171.271, volatility=0.060),0,2013-10-01T00:00:00
+1562.4943785,130.073526995,Paris Saint-Germain,glicko.glicko2.Rating(mu=1746.260, sigma=152.865, volatility=0.060),0,2013-10-06T00:00:00
+1518.20416936,123.521936753,Nice,glicko.glicko2.Rating(mu=1521.999, sigma=141.746, volatility=0.060),0,2013-10-18T00:00:00
+1503.45292125,120.081582628,Napoli,glicko.glicko2.Rating(mu=1788.759, sigma=149.777, volatility=0.060),0,2013-10-22T00:00:00
+1466.80213803,114.925794179,Stade de Reims,glicko.glicko2.Rating(mu=1482.012, sigma=141.031, volatility=0.060),0,2013-10-26T00:00:00
+1467.68199198,110.275946705,Stade Rennes,glicko.glicko2.Rating(mu=1476.936, sigma=126.054, volatility=0.060),0.5,2013-11-02T00:00:00
+1460.74800123,108.932975936,Napoli,glicko.glicko2.Rating(mu=1861.005, sigma=130.303, volatility=0.060),0,2013-11-06T00:00:00
+1475.42141404,106.130422335,Sochaux,glicko.glicko2.Rating(mu=1248.862, sigma=125.138, volatility=0.060),1,2013-11-10T00:00:00
