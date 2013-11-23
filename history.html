@@ -33,7 +33,7 @@ td {
 
     <div class="grid_13 prefix_3 content">
 
-<h1>Rating History</h1>
+<h1><span id="teamname"></span> Rating History</h1>
 
 <div id="datatable"></div>
 
@@ -53,16 +53,16 @@ function fmt(dt) {
 rows = []
 
 var team = window.location.search.split("=")[1];
-if (!team) team = "realbetis"
+//if (!team) team = "realbetis"
 
 d3.csv("ratingdata/" + team + ".csv", function(error, csv) {
   csv.forEach(function(row) {
-    // skip empty rows
     row.mu = parseFloat(row.mu).toFixed(1);
     row.sigma = parseFloat(row.sigma).toFixed(1);
     row.ninetyfive = row.mu - (2 * row.sigma);
     row.five = row.mu + (2 * row.sigma);
     row.dt = fmt(new Date(Date.parse(row.date)));
+
 
     var res = parseFloat(row.result);
     if (res < .5) {
@@ -74,6 +74,8 @@ d3.csv("ratingdata/" + team + ".csv", function(error, csv) {
     }
     rows.push(row);
   });
+
+  d3.select("#teamname").text(rows[0].fullname)
 
   var table = d3.select("#datatable").append("table");
       thead = table.append("thead");
