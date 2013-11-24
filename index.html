@@ -74,6 +74,7 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
       thead = table.append("thead");
       tbody = table.append("tbody");
 
+  thead.append("th").text("Rank");
   thead.append("th").text("Team");
   thead.append("th").html("League");
   thead.append("th").text("Other");
@@ -85,11 +86,11 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
       .enter().append("tr");
 
   var td = tr.selectAll("td")
-        .data(function(d) { return [[d.sanitizedname, d.name], d.leaguerecord, d.otherrecord, d.mu]; })
+        .data(function(d, i) { return [i, [i, d.sanitizedname, d.name], d.leaguerecord, d.otherrecord, d.mu]; })
       .enter().append("td")
         .html(function(d,i) {
-            if (i==0) {
-              return '<a href="history.html?t='+d[0]+'">'+d[1]+'</a>';
+            if (i==1) {
+              return '<a href="history.html?t='+d[1]+'">'+d[2]+'</a>';
             } else {
               return d;
             }
