@@ -49,13 +49,18 @@ path {
 teams = []
 
 d3.csv("ratingdata/allteams.csv", function(error, csv) {
+  var max_last5diff = 0;
   csv.forEach(function(row) {
     row.mu = parseFloat(row.mu).toFixed(1);
     row.sigma = parseFloat(row.sigma).toFixed(1);
     row.ninetyfive = row.mu - (2 * row.sigma);
     row.five = row.mu + (2 * row.sigma);
-    row.change = d3.format("+.1f")(row.change)
-    row.last5 = row.last5.split("|").map(Number)
+    row.change = d3.format("+.1f")(row.change);
+    row.last5 = row.last5.split("|").map(Number);
+
+    var last5diff = d3.max(row.last5) - d3.min(row.last5);
+    if (last5diff > max_last5diff) max_last5diff = last5diff;
+
     teams.push(row);
   });
 
@@ -64,17 +69,6 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
     if (a.mu > b.mu) return -1;
     return 0;
   });
-
-  var maxMu = 0;
-  var minMu = Number.MAX_VALUE;
-  var max95 = 0;
-  var min95 = Number.MAX_VALUE;
-  for (i=0; i < teams.length; i++) {
-    if (teams[i].mu > maxMu) { maxMu = teams[i].mu; }
-    if (teams[i].mu < minMu) { minMu = teams[i].mu; }
-    if (teams[i].five > max95) { max95 = teams[i].five; }
-    if (teams[i].ninetyfive < min95) { min95 = teams[i].ninetyfive; }
-  }
 
   var table = d3.select("#datatable").append("table");
       thead = table.append("thead");
@@ -104,16 +98,15 @@ d3.csv("ratingdata/allteams.csv", function(error, csv) {
   var width = 49,
       height = 22;
   var x = d3.scale.linear().domain([0, 4]).range([0, width]);
-  var y = d3.scale.linear().domain([minMu, maxMu]).range([height, 0]);
+  var halfdiff = max_last5diff/2;
 
   function sety(last5) {
-    var max = 0;
-    var min = Number.MAX_VALUE;
-    for (i=0; i < last5.length; i++) {
-      if (last5[i] > max) max = last5[i];
-      if (last5[i] < min) min = last5[i];
-    }
-    y = d3.scale.linear().domain([min, max]).range([height,0]);
+    var max = d3.max(last5);
+    var min = d3.min(last5);
+    var avg = (max+min)/2;
+    // Ensure that all of the y axes have the same scale, by making the domain exactly
+    // max_last5diff tall. Center the average of the min and the max of the spark chart
+    y = d3.scale.linear().domain([avg-halfdiff, avg+halfdiff]).range([height,0]);
     return last5;
   }
 
