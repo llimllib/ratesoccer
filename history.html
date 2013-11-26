@@ -44,7 +44,7 @@ td {
 
 function fmt(dt) {
   if (dt) {
-    return d3.time.format("%b %d %Y")(dt);
+    return d3.time.format.utc("%b %d %Y")(dt);
   }
   return "";
 }
