@@ -229,11 +229,13 @@ if __name__=="__main__":
     ligue1_results = get_results("data/ligue1_13_14.csv")
     seriea_results = get_results("data/seriea_13_14.csv")
     laliga_results = get_results("data/laliga_13_14.csv")
+    eredivisie_results = get_results("data/eredivisie_13_14.csv")
+    spfl_results = get_results("data/spfl_13_14.csv")
     cl_results = get_results("data/cl_13_14.csv", league=False)
     europa_results = get_results("data/europa_13_14.csv", league=False)
 
-    rated_teams = get_teams(bpl_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
-    results = merge_by_date(bpl_results, cl_results, europa_results, bundesliga_results, ligue1_results, seriea_results, laliga_results)
+    rated_teams = get_teams(bpl_results, bundesliga_results, ligue1_results, seriea_results, laliga_results, eredivisie_results, spfl_results)
+    results = merge_by_date(bpl_results, cl_results, europa_results, bundesliga_results, ligue1_results, seriea_results, laliga_results, eredivisie_results, spfl_results)
 
     glicko_env = glicko.Glicko2(volatility=0.25)
 
